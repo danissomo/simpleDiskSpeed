@@ -1,0 +1,6 @@
+cmake_minimum_required(VERSION 3.10)
+project(benchmark)
+add_executable(main_target src/main.cpp src/app.cpp src/benchmark.cpp src/semaphore.cpp)
+target_link_options(main_target PRIVATE "/SUBSYSTEM:WINDOWS")
+target_link_libraries(main_target user32)
+target_include_directories(main_target PRIVATE include)
