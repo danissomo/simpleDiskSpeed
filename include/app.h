@@ -19,11 +19,7 @@ public:
     void Init(HINSTANCE hInstance, HINSTANCE hPrevInstance, PWSTR pCmdLine, int nCmdShow);
     bool Update();
     void Show();
-    static App *Instance()
-    {
-        static App instance;
-        return &instance;
-    }
+    static App *Instance();
     void InputAction(WPARAM action);
 
 protected:

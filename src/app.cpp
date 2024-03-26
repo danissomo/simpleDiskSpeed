@@ -109,12 +109,10 @@ bool App::Update()
 
 void App::InputAction(WPARAM action)
 {
-    LPWSTR s_chunkSize = new wchar_t[20];
-    LPWSTR s_fileSize = new wchar_t[20];
+    LPSTR s_chunkSize = new  char[20];
+    LPSTR s_fileSize = new  char[20];
     int i_chunkSize_kb = 0;
-    _wtoi(s_chunkSize);
     int i_fileSize_mb = 0;
-    _wtoi(s_fileSize);
     switch (action)
     {
     case Action::OnStop:
@@ -122,21 +120,32 @@ void App::InputAction(WPARAM action)
         EnableWindow(this->startBtn, true);
         break;
     case Action::OnStart:
-        EnableWindow(this->startBtn, false);
-        GetWindowText(this->hChunkSizeEdit, s_chunkSize, 20);
-        GetWindowText(this->hFileSizeEdit, s_fileSize, 20);
-        i_chunkSize_kb = _wtoi(s_chunkSize);
-        i_fileSize_mb = _wtoi(s_fileSize);
-        this->lastSettings.chunkSize = i_chunkSize_kb;
-        this->lastSettings.fileSize = i_fileSize_mb;
-        this->writer.Start("test.txt", i_chunkSize_kb, i_fileSize_mb * 1024);
-        EnableWindow(this->stopBtn, true);
+        
+        GetWindowTextA(this->hChunkSizeEdit, s_chunkSize, 20);
+        GetWindowTextA(this->hFileSizeEdit, s_fileSize, 20);
+        i_chunkSize_kb = atoi(s_chunkSize);
+        i_fileSize_mb = atoi(s_fileSize);
+        if (i_chunkSize_kb <= 0 || i_fileSize_mb <= 0)
+            MessageBoxA(this->windowHandle, "Not valid params", NULL, NULL);
+        else{
+            EnableWindow(this->startBtn, false);
+            this->lastSettings.chunkSize = i_chunkSize_kb;
+            this->lastSettings.fileSize = i_fileSize_mb;
+            this->writer.Start("test.txt", i_chunkSize_kb, i_fileSize_mb * 1024);
+            EnableWindow(this->stopBtn, true);
+        }
+        
         break;
 
     default:
         break;
     }
     delete s_chunkSize, s_chunkSize;
+}
+App* App::Instance()
+{
+        static App instance;
+        return &instance;
 }
 
 LRESULT CALLBACK AppProc(HWND hwnd, UINT uMsg, WPARAM wParam, LPARAM lParam)
